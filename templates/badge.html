@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<style>
+    @page {
+        size: 90mm 120mm;
+        margin: 0;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Helvetica", "Arial", sans-serif;
+    }
+
+    .badge {
+        width: 90mm;
+        height: 120mm;
+        page-break-after: always;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 8mm;
+    }
+
+    .badge:last-child {
+        page-break-after: avoid;
+    }
+
+    .stripe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 18mm;
+        background-color: #1a2a5e;
+    }
+
+    .committee {
+        position: absolute;
+        top: 6mm;
+        width: 100%;
+        color: white;
+        font-size: 12pt;
+        font-weight: bold;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .name {
+        margin-top: 20mm;
+        font-size: 20pt;
+        font-weight: bold;
+        color: #1a2a5e;
+    }
+
+    .country {
+        margin-top: 4mm;
+        font-size: 14pt;
+        color: #333333;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+</style>
+</head>
+<body>
+    {% for delegate in delegates %}
+    <div class="badge">
+        <div class="stripe"></div>
+        <div class="committee">{{ delegate.committee }}</div>
+        <div class="name">{{ delegate.name }}</div>
+        <div class="country">{{ delegate.country }}</div>
+    </div>
+    {% endfor %}
+</body>
+</html>

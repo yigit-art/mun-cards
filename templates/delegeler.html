@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Delege Listesi</title>
+</head>
+<body>
+    <h1>Delege Listesi</h1>
+    <table border="1" cellpadding="8">
+        <tr>
+            <th>İsim</th>
+            <th>Ülke</th>
+            <th>Komite</th>
+        </tr>
+        {% for delegate in delegates %}
+        <tr>
+            <td>{{ delegate.name }}</td>
+            <td>{{ delegate.country }}</td>
+            <td>{{ delegate.committee }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <p><a href="/">Geri dön</a></p>
+</body>
+</html>

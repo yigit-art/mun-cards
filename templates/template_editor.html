@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8">
+    <title>Şablon Editörü</title>
+    <style>
+        #template-image {
+            max-width: 500px;
+            cursor: crosshair;
+        }
+    </style>
+  </head> 
+  <body>
+    <h1>Alanları yerleştir</h1>
+    <p>Görsele Tıklayarak isim, ülke, komite ve logo alanlarını yerleştirebilirsiniz.</p>
+    <img id="template-image" src="/{{ image_path }}" data-image-path="{{ image_path }}">
+    {% if logo_path %}
+<p>Logo: <img src="/{{ logo_path }}" style="max-width: 100px;" data-logo-path="{{ logo_path }}" id="logo-preview"></p>
+{% endif %}
+    <pre id="output"></pre>
+    <button id="save-btn">Kaydet</button>
+    <script>
+    const fields = {};
+    const img = document.getElementById("template-image");
+    const output = document.getElementById("output");
+
+img.addEventListener("click", function(event) {
+    const xPercent = (event.offsetX / img.clientWidth) * 100;
+    const yPercent = (event.offsetY / img.clientHeight) * 100;
+
+    const fieldName = prompt("Bu nokta hangi alan? (name/country/committee/logo/flag)");
+    if (!fieldName) {
+        return;
+    }
+
+    const fieldData = {
+        x_percent: Math.round(xPercent * 100) / 100,
+        y_percent: Math.round(yPercent * 100) / 100
+    };
+
+    if (fieldName !== "logo" && fieldName !== "flag") {
+        const fontSize = prompt("Font boyutu (pt), örn: 20", "20");
+        const fontColor = prompt("Renk (hex kodu), örn: #1a2a5e", "#1a2a5e");
+        const isBold = confirm("Kalın (bold) olsun mu?");
+
+        fieldData.font_size = parseInt(fontSize) || 20;
+        fieldData.font_color = fontColor || "#000000";
+        fieldData.bold = isBold;
+    }
+
+    if (fieldName === "logo" || fieldName === "flag") {
+        const widthPercent = prompt("Genişlik (görselin yüzdesi olarak), örn: 15", "15");
+        fieldData.width_percent = parseFloat(widthPercent) || 15;
+    }
+
+    fields[fieldName] = fieldData;
+    output.textContent = JSON.stringify(fields, null, 2);
+});
+
+document.getElementById("save-btn").addEventListener("click", function() {
+    const imagePath = img.getAttribute("data-image-path");
+    const logoPreview = document.getElementById("logo-preview");
+    const logoPath = logoPreview ? logoPreview.getAttribute("data-logo-path") : null;
+
+    fetch("/save-template", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            fields: fields,
+            image_path: imagePath,
+            logo_path: logoPath
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert("Kaydedildi! Şablon ID: " + data.template_id);
+    })
+    .catch(error => {
+        alert("Hata oluştu: " + error);
+    });
+});
+</script>
+  </body>
+</html>

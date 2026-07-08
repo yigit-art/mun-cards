@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environment
+venv/
+.venv/
+
+# Flask
+instance/
+.flaskenv
+
+# Environment variables / secrets
+.env
+
+# Project-specific generated/uploaded content
+static/uploads/
+static/flags/
+templates_data/
+
+# Editor/OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Claude Code local settings
+.claude/

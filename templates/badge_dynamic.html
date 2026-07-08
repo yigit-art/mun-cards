@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<style>
+    @page {
+        size: 90mm 120mm;
+        margin: 0;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Helvetica", "Arial", sans-serif;
+    }
+
+    .badge {
+        width: 90mm;
+        height: 120mm;
+        page-break-after: always;
+        position: relative;
+        background-image: url('/{{ background_image }}');
+        background-size: cover;
+        background-position: center;
+    }
+
+    .badge:last-child {
+        page-break-after: avoid;
+    }
+
+    .field {
+        position: absolute;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        white-space: nowrap;
+    }
+</style>
+</head>
+<body>
+    {% for delegate in delegates %}
+    <div class="badge">
+        {% if fields.name %}
+        <div class="field" style="left: {{ fields.name.x_percent }}%; top: {{ fields.name.y_percent }}%; font-size: {{ fields.name.font_size|default(20) }}pt; color: {{ fields.name.font_color|default('#1a2a5e') }}; font-weight: {{ 'bold' if fields.name.bold|default(true) else 'normal' }};">
+            {{ delegate.name }}
+        </div>
+        {% endif %}
+
+        {% if fields.country %}
+        <div class="field" style="left: {{ fields.country.x_percent }}%; top: {{ fields.country.y_percent }}%; font-size: {{ fields.country.font_size|default(14) }}pt; color: {{ fields.country.font_color|default('#333333') }}; font-weight: {{ 'bold' if fields.country.bold|default(false) else 'normal' }};">
+            {{ delegate.country }}
+        </div>
+        {% endif %}
+
+        {% if fields.committee %}
+        <div class="field" style="left: {{ fields.committee.x_percent }}%; top: {{ fields.committee.y_percent }}%; font-size: {{ fields.committee.font_size|default(12) }}pt; color: {{ fields.committee.font_color|default('#ffffff') }}; font-weight: {{ 'bold' if fields.committee.bold|default(true) else 'normal' }};">
+            {{ delegate.committee }}
+        </div>
+        {% endif %}
+        {% if fields.logo and logo_image %}
+<img src="/{{ logo_image }}"
+     style="position: absolute; left: {{ fields.logo.x_percent }}%; top: {{ fields.logo.y_percent }}%; width: {{ fields.logo.width_percent|default(15) }}%; transform: translate(-50%, -50%);">
+{% endif %}
+{% if fields.logo and logo_image %}
+<img src="/{{ logo_image }}"
+     style="position: absolute; left: {{ fields.logo.x_percent }}%; top: {{ fields.logo.y_percent }}%; width: {{ fields.logo.width_percent|default(15) }}%; transform: translate(-50%, -50%);">
+{% endif %}
+
+{% if fields.flag and delegate.flag_path %}
+<img src="/{{ delegate.flag_path }}"
+     style="position: absolute; left: {{ fields.flag.x_percent }}%; top: {{ fields.flag.y_percent }}%; width: {{ fields.flag.width_percent|default(15) }}%; transform: translate(-50%, -50%);">
+{% endif %}
+    </div>
+    {% endfor %}
+</body>
+</html>

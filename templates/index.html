@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>MUN Kart Üretici</title>
+</head>
+<body>
+    <h1>MUN Kart Üretici</h1>
+
+    <h2>Delege listesini önizle</h2>
+    <form action="/generate" method="post" enctype="multipart/form-data">
+        <input type="file" name="csv_file" accept=".csv" required>
+        <button type="submit">Listeyi Göster</button>
+    </form>
+<form action="/upload-template" method="post" enctype="multipart/form-data">
+    <input type="file" name="template_image" accept="image/*" required>
+    <label>Logo (opsiyonel): <input type="file" name="logo_image" accept="image/*"></label>
+    <button type="submit">Şablon Yükle</button>
+</form>>
+    <h2>Yaka kartlarını PDF olarak indir</h2>
+    <form action="/generate-badges" method="post" enctype="multipart/form-data">
+        <input type="file" name="csv_file" accept=".csv" required>
+        <button type="submit">PDF Oluştur</button>
+    </form>
+    <h2>Özel şablonla kart oluştur</h2>
+<form id="custom-card-form" enctype="multipart/form-data">
+    <label>Kart türü:
+        <select name="card_type" id="card-type">
+            <option value="badge">Yaka kartı</option>
+            <option value="placard">Plakkart</option>
+        </select>
+    </label><br>
+    <label>Şablon ID: <input type="text" name="template_id" required></label><br>
+    <div id="placard-dimensions">
+        <label>Genişlik (mm): <input type="number" name="width_mm" step="0.1"></label>
+        <label>Yükseklik (mm): <input type="number" name="height_mm" step="0.1"></label><br>
+    </div>
+    <input type="file" name="csv_file" accept=".csv" required>
+    <button type="submit">PDF Oluştur</button>
+</form>
+
+<script>
+const cardTypeSelect = document.getElementById("card-type");
+const placardDimensions = document.getElementById("placard-dimensions");
+
+function toggleDimensions() {
+    const isPlacard = cardTypeSelect.value === "placard";
+    placardDimensions.style.display = isPlacard ? "block" : "none";
+    placardDimensions.querySelector("[name=width_mm]").required = isPlacard;
+    placardDimensions.querySelector("[name=height_mm]").required = isPlacard;
+}
+cardTypeSelect.addEventListener("change", toggleDimensions);
+toggleDimensions();
+
+document.getElementById("custom-card-form").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const form = event.target;
+    const templateId = form.template_id.value;
+    const isPlacard = form.card_type.value === "placard";
+    const formData = new FormData();
+    formData.append("csv_file", form.csv_file.files[0]);
+
+    const endpoint = isPlacard
+        ? `/generate-placards-custom/${templateId}`
+        : `/generate-badges-custom/${templateId}`;
+
+    if (isPlacard) {
+        formData.append("width_mm", form.width_mm.value);
+        formData.append("height_mm", form.height_mm.value);
+    }
+
+    fetch(endpoint, {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.blob())
+    .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        window.open(url, "_blank");
+    })
+    .catch(error => alert("Hata: " + error));
+});
+</script>
+</body>
+</html>
