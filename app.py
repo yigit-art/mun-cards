@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_file
 from country_flags import check_countries
 import generator
 
@@ -80,14 +80,18 @@ def generate_badges_custom(template_id):
     if not csv_file:
         return "CSV dosyası yüklenmedi.", 400
 
+    cards_per_page = request.form.get("cards_per_page", default=1, type=int)
+
     delegates = generator.parse_csv(csv_file)
-    generator.attach_flag_paths(delegates)
+    generator.attach_media_paths(delegates)
 
     template_data = generator.load_template(template_id)
     if template_data is None:
         return "Şablon bulunamadı.", 404
 
-    pdf = generator.render_badges_custom_pdf(delegates, template_data, request.url_root)
+    pdf = generator.render_badges_custom_pdf(
+        delegates, template_data, request.url_root, cards_per_page=cards_per_page
+    )
 
     return pdf, 200, {
         "Content-Type": "application/pdf",
@@ -106,21 +110,34 @@ def generate_placards_custom(template_id):
     if not width_mm or not height_mm:
         return "Genişlik ve yükseklik girilmedi.", 400
 
+    cards_per_page = request.form.get("cards_per_page", default=1, type=int)
+
     delegates = generator.parse_csv(csv_file)
-    generator.attach_flag_paths(delegates)
+    generator.attach_media_paths(delegates)
 
     template_data = generator.load_template(template_id)
     if template_data is None:
         return "Şablon bulunamadı.", 404
 
     pdf = generator.render_placards_custom_pdf(
-        delegates, template_data, width_mm, height_mm, request.url_root
+        delegates, template_data, width_mm, height_mm, request.url_root,
+        cards_per_page=cards_per_page,
     )
 
     return pdf, 200, {
         "Content-Type": "application/pdf",
         "Content-Disposition": "inline; filename=placards.pdf",
     }
+
+
+@app.route("/download-sample")
+def download_sample():
+    return send_file(
+        "sample.csv",
+        as_attachment=True,
+        download_name="sample.csv",
+        mimetype="text/csv",
+    )
 
 
 if __name__ == "__main__":

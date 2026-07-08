@@ -1,51 +1,509 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <title>MUN Kart Üretici</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MUN Kart Üretici</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --navy: #1a2a5e;
+        --navy-light: #24336e;
+        --gold: #c6a15b;
+        --gold-light: #e7cd9c;
+        --cream: #faf7f0;
+        --ink: #2b2b33;
+        --muted: #6b6f7d;
+        --faint: #ddd6c7;
+    }
+    * { box-sizing: border-box; }
+    body {
+        margin: 0;
+        background: var(--cream);
+        font-family: 'IBM Plex Sans', sans-serif;
+        color: var(--ink);
+    }
+    a { color: var(--navy); }
+    a:hover { color: var(--gold); }
+    h1, h2, .serif { font-family: 'Source Serif 4', serif; }
+
+    header.top-bar {
+        background: var(--navy);
+        padding: 20px 48px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+    header.top-bar .brand { display: flex; align-items: center; gap: 14px; }
+    header.top-bar .brand-title { font-size: 21px; font-weight: 700; color: #fff; }
+    header.top-bar .brand-subtitle {
+        font-size: 11px; font-weight: 600; color: var(--gold);
+        letter-spacing: 1.2px; text-transform: uppercase; margin-top: 2px;
+    }
+    header.top-bar nav { display: flex; gap: 10px; flex-wrap: wrap; }
+    header.top-bar nav a {
+        padding: 9px 18px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.28);
+        color: #f3ede0; font-size: 13px; font-weight: 500; text-decoration: none;
+    }
+    header.top-bar nav a:hover { background: var(--gold); color: var(--navy); border-color: var(--gold); }
+
+    .intro {
+        background: var(--cream);
+        padding: 44px 48px 36px;
+        text-align: center;
+    }
+    .intro p { max-width: 620px; margin: 0 auto 32px; font-size: 15.5px; line-height: 1.65; color: var(--muted); }
+    .intro .steps { display: flex; justify-content: center; gap: 56px; flex-wrap: wrap; }
+    .intro .step { display: flex; flex-direction: column; align-items: center; gap: 10px; max-width: 160px; }
+    .intro .step-badge {
+        width: 40px; height: 40px; border-radius: 50%; background: var(--gold); color: var(--navy);
+        display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 17px;
+    }
+    .intro .step-label { font-size: 13px; font-weight: 600; color: var(--navy); }
+
+    main { max-width: 1180px; margin: 0 auto; padding: 8px 48px 90px; display: flex; flex-direction: column; gap: 32px; }
+
+    section.card {
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 4px 24px rgba(26,42,94,0.08);
+        overflow: hidden;
+    }
+    section.card .accent-bar { height: 6px; background: var(--gold); }
+    section.card .card-body { padding: 40px; }
+    .eyebrow {
+        display: block; font-size: 12px; font-weight: 700; letter-spacing: 1.5px;
+        color: var(--gold); text-transform: uppercase; margin-bottom: 8px;
+    }
+    section.card h2 { font-size: 28px; font-weight: 700; color: var(--navy); margin: 0 0 8px; }
+    section.card > .card-body > p.lead { font-size: 14px; color: var(--muted); margin: 0 0 26px; max-width: 640px; }
+    .divider { height: 1px; background: linear-gradient(90deg, var(--gold), rgba(198,161,91,0)); margin-bottom: 28px; }
+
+    .row { display: flex; gap: 28px; flex-wrap: wrap; }
+    .row.align-stretch { align-items: stretch; }
+    .row.align-start { align-items: flex-start; }
+
+    .dropzone {
+        flex: 1 1 380px;
+        display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+        border: 2px dashed var(--gold); border-radius: 16px; background: var(--cream);
+        padding: 38px 24px; cursor: pointer; text-align: center;
+    }
+    .dropzone:hover { background: #f6ead2; }
+    .dropzone .dz-title { font-size: 15px; font-weight: 600; color: var(--navy); }
+    .dropzone .dz-hint { font-size: 13px; color: #8a8d99; }
+    .dropzone input[type="file"] { display: none; }
+    .pill-btn {
+        margin-top: 4px; padding: 10px 22px; border-radius: 10px; border: none;
+        background: var(--navy); color: #fff; font-size: 13px; font-weight: 600;
+        font-family: inherit; cursor: pointer;
+    }
+    .dropzone .dz-filename { margin-top: 2px; font-size: 12.5px; color: var(--navy); font-weight: 600; }
+
+    .info-panel {
+        flex: 1 1 280px; background: rgba(26,42,94,0.04); border-radius: 16px; padding: 24px;
+        display: flex; flex-direction: column; gap: 14px;
+    }
+    .info-panel .panel-title { font-size: 13px; font-weight: 700; color: var(--navy); text-transform: uppercase; letter-spacing: 0.6px; }
+    .info-list { display: flex; flex-direction: column; gap: 10px; }
+    .info-list .item { display: flex; align-items: center; gap: 10px; font-size: 13.5px; color: #2b2b33; }
+    .info-list .item.soon { color: var(--muted); }
+    .info-list .dot { width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0; }
+    .info-list .dot.ready { background: var(--gold); }
+    .info-list .dot.soon { background: var(--faint); }
+    .soon-tag {
+        font-size: 10px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+        color: var(--muted); background: var(--faint); border-radius: 999px; padding: 2px 8px; margin-left: auto;
+    }
+
+    .btn-outline {
+        margin-top: 6px; align-self: flex-start; padding: 9px 16px; border-radius: 9px;
+        border: 1.5px solid var(--navy); background: #fff; color: var(--navy); font-size: 13px;
+        font-weight: 600; font-family: inherit; cursor: pointer; text-decoration: none; display: inline-block;
+    }
+    .btn-outline:hover { background: var(--navy); color: #fff; }
+    .btn-outline[disabled] {
+        cursor: not-allowed; opacity: 0.5; border-color: var(--faint); color: var(--muted);
+    }
+    .btn-outline[disabled]:hover { background: #fff; color: var(--muted); }
+
+    .field-chip {
+        display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 999px;
+        font-size: 13px; font-family: inherit;
+    }
+    .field-chip .bullet { width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+    .field-chip.ready { border: 1.5px solid var(--gold); background: rgba(231,205,156,0.33); color: var(--navy); }
+    .field-chip.soon { border: 1.5px solid var(--faint); background: #fff; color: var(--muted); }
+
+    .canvas-preview {
+        position: relative; width: 100%; max-width: 480px; height: 300px; border-radius: 16px;
+        overflow: hidden; background: repeating-linear-gradient(135deg, #eee7d8 0px, #eee7d8 10px, #f6f1e6 10px, #f6f1e6 20px);
+        border: 2px solid rgba(26,42,94,0.15); margin: 0 auto; background-size: cover; background-position: center;
+        display: flex; align-items: center; justify-content: center;
+    }
+    .canvas-preview .placeholder { font-size: 12px; letter-spacing: 1.5px; color: #a89a78; text-transform: uppercase; }
+
+    .segmented { display: flex; gap: 8px; }
+    .segmented button {
+        padding: 10px 20px; border-radius: 10px; border: 1.5px solid var(--faint); background: #fff;
+        color: var(--navy); font-size: 14px; cursor: pointer; font-family: inherit; font-weight: 600;
+    }
+    .segmented button.active { border-color: var(--navy); background: var(--navy); color: #fff; }
+    .segmented button[disabled] { cursor: not-allowed; color: var(--muted); opacity: 0.6; }
+
+    label.field-label { display: block; font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 8px; }
+    select.select-input, input.text-input {
+        width: 100%; padding: 12px 14px; border-radius: 10px; border: 1.5px solid var(--faint);
+        font-size: 14px; color: var(--ink); background: #fff; font-family: inherit;
+    }
+    input[disabled].text-input, select[disabled].select-input { color: var(--muted); background: #f4f2ec; cursor: not-allowed; }
+
+    .checkbox-row { display: flex; align-items: center; gap: 10px; }
+    .checkbox-row label { font-size: 14px; color: var(--ink); }
+    .checkbox-row.disabled label { color: var(--muted); }
+
+    .btn-generate {
+        margin-top: 6px; padding: 16px 28px; border-radius: 12px; border: none; background: var(--gold);
+        color: var(--navy); font-size: 15.5px; font-weight: 700; cursor: pointer;
+        box-shadow: 0 8px 20px rgba(198,161,91,0.35); align-self: flex-start; font-family: inherit;
+    }
+    .btn-generate:hover { background: #d8b46f; }
+    .btn-generate:disabled { opacity: 0.6; cursor: wait; }
+
+    .preview-badge {
+        width: 320px; height: 200px; border-radius: 14px; background: var(--navy); border: 2px solid var(--gold);
+        box-shadow: 0 12px 30px rgba(26,42,94,0.25); display: flex; flex-direction: column; overflow: hidden;
+    }
+    .preview-badge .strip { background: var(--gold); padding: 10px 16px; text-align: center; }
+    .preview-badge .strip span { font-size: 11px; font-weight: 700; letter-spacing: 1px; color: var(--navy); text-transform: uppercase; }
+    .preview-badge .body { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 16px; }
+    .preview-badge .avatar {
+        width: 72px; height: 72px; border-radius: 50%; border: 2px solid var(--gold);
+        background: repeating-linear-gradient(45deg, var(--navy-light), var(--navy-light) 6px, var(--navy) 6px, var(--navy) 12px);
+    }
+    .preview-badge .name { font-size: 19px; font-weight: 700; color: #fff; text-align: center; }
+    .preview-badge .country { font-size: 13px; font-weight: 600; color: var(--gold); }
+    .preview-badge .committee { font-size: 11.5px; color: #cfd3e0; letter-spacing: 0.4px; }
+    .preview-badge .footer { padding: 8px; text-align: center; border-top: 1px solid rgba(198,161,91,0.4); }
+    .preview-badge .footer span { font-size: 9.5px; color: var(--gold); letter-spacing: 1px; }
+
+    .status-msg { margin-top: 14px; font-size: 13.5px; font-weight: 600; }
+    .status-msg.ok { color: var(--navy); }
+    .status-msg.err { color: #a33; }
+
+    .quick-action {
+        border: 1.5px dashed var(--faint); border-radius: 16px; padding: 22px 24px;
+        display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px;
+        margin-bottom: 28px;
+    }
+    .quick-action .qa-text .qa-title { font-size: 15px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+    .quick-action .qa-text .qa-desc { font-size: 13px; color: var(--muted); }
+    .quick-action form { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .quick-action input[type="file"] { font-size: 13px; }
+
+    footer.bottom-bar {
+        background: #121f47; padding: 24px 48px; display: flex; justify-content: space-between;
+        flex-wrap: wrap; gap: 12px;
+    }
+    footer.bottom-bar span { font-size: 12.5px; color: #cfd3e0; }
+    footer.bottom-bar .links { display: flex; gap: 20px; }
+    footer.bottom-bar a { font-size: 12.5px; color: #cfd3e0; text-decoration: none; }
+    footer.bottom-bar a:hover { color: var(--gold); }
+</style>
 </head>
 <body>
-    <h1>MUN Kart Üretici</h1>
 
-    <h2>Delege listesini önizle</h2>
-    <form action="/generate" method="post" enctype="multipart/form-data">
-        <input type="file" name="csv_file" accept=".csv" required>
-        <button type="submit">Listeyi Göster</button>
-    </form>
-<form action="/upload-template" method="post" enctype="multipart/form-data">
-    <input type="file" name="template_image" accept="image/*" required>
-    <label>Logo (opsiyonel): <input type="file" name="logo_image" accept="image/*"></label>
-    <button type="submit">Şablon Yükle</button>
-</form>>
-    <h2>Yaka kartlarını PDF olarak indir</h2>
-    <form action="/generate-badges" method="post" enctype="multipart/form-data">
-        <input type="file" name="csv_file" accept=".csv" required>
-        <button type="submit">PDF Oluştur</button>
-    </form>
-    <h2>Özel şablonla kart oluştur</h2>
-<form id="custom-card-form" enctype="multipart/form-data">
-    <label>Kart türü:
-        <select name="card_type" id="card-type">
-            <option value="badge">Yaka kartı</option>
-            <option value="placard">Plakkart</option>
-        </select>
-    </label><br>
-    <label>Şablon ID: <input type="text" name="template_id" required></label><br>
-    <div id="placard-dimensions">
-        <label>Genişlik (mm): <input type="number" name="width_mm" step="0.1"></label>
-        <label>Yükseklik (mm): <input type="number" name="height_mm" step="0.1"></label><br>
+<header class="top-bar">
+    <div class="brand">
+        <svg width="48" height="48" viewBox="0 0 48 48" style="flex-shrink:0;">
+            <circle cx="24" cy="24" r="22" fill="#1a2a5e" stroke="#c6a15b" stroke-width="2"></circle>
+            <ellipse cx="24" cy="24" rx="9" ry="20" fill="none" stroke="#c6a15b" stroke-width="1" opacity="0.5"></ellipse>
+            <line x1="3" y1="24" x2="45" y2="24" stroke="#c6a15b" stroke-width="1" opacity="0.5"></line>
+            <text x="24" y="29" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="15" font-weight="700" fill="#c6a15b">MK</text>
+        </svg>
+        <div>
+            <div class="brand-title serif">MUN Kart Üretici</div>
+            <div class="brand-subtitle">Katılımcı Rozeti · Plaket Aracı</div>
+        </div>
     </div>
-    <input type="file" name="csv_file" accept=".csv" required>
-    <button type="submit">PDF Oluştur</button>
-</form>
+    <nav>
+        <a href="#csv">1. Katılımcı Listesi</a>
+        <a href="#tasarim">2. Kart Tasarımı</a>
+        <a href="#olustur">3. Kart Oluştur</a>
+    </nav>
+</header>
+
+<section class="intro">
+    <p>Katılımcı listenizi yükleyin, kart tasarımınızdaki alanları eşleyin ve saniyeler içinde yaka kartı ile plaket üretin.</p>
+    <div class="steps">
+        <div class="step">
+            <div class="step-badge serif">1</div>
+            <div class="step-label">CSV Yükle</div>
+        </div>
+        <div class="step">
+            <div class="step-badge serif">2</div>
+            <div class="step-label">Alanları Eşle</div>
+        </div>
+        <div class="step">
+            <div class="step-badge serif">3</div>
+            <div class="step-label">Kartları Üret</div>
+        </div>
+    </div>
+</section>
+
+<main>
+
+    <!-- 1. Katılımcı Listesi (CSV) -->
+    <section id="csv" class="card">
+        <div class="accent-bar"></div>
+        <div class="card-body">
+            <span class="eyebrow">Adım 1</span>
+            <h2 class="serif">Katılımcı Listesi (CSV)</h2>
+            <p class="lead">MUN katılımcılarının ad, ülke ve komite bilgilerini içeren CSV dosyasını yükleyin.</p>
+            <div class="divider"></div>
+
+            <form action="/generate" method="post" enctype="multipart/form-data">
+                <div class="row align-stretch">
+                    <div style="flex:1 1 380px;display:flex;flex-direction:column;gap:14px;">
+                        <label class="dropzone" id="csv-preview-dropzone">
+                            <svg width="34" height="34" viewBox="0 0 34 34">
+                                <circle cx="17" cy="17" r="16" fill="#1a2a5e"></circle>
+                                <line x1="17" y1="22" x2="17" y2="11" stroke="#c6a15b" stroke-width="2" stroke-linecap="round"></line>
+                                <polyline points="12,15 17,10 22,15" fill="none" stroke="#c6a15b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></polyline>
+                            </svg>
+                            <div class="dz-title">CSV dosyanızı buraya yükleyin</div>
+                            <div class="dz-hint">veya bilgisayarınızdan seçin</div>
+                            <span class="pill-btn" style="display:inline-block;">Dosya Seç</span>
+                            <input type="file" name="csv_file" accept=".csv" required>
+                            <div class="dz-filename" data-filename-label></div>
+                        </label>
+                        <button type="submit" class="pill-btn" style="align-self:flex-start;">Listeyi Göster</button>
+                    </div>
+
+                    <div class="info-panel">
+                        <div class="panel-title">Gerekli Sütunlar</div>
+                        <div class="info-list">
+                            <div class="item">
+                                <svg class="dot ready" width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#c6a15b"></circle><polyline points="4.5,8.2 7,10.5 11.5,5.5" fill="none" stroke="#1a2a5e" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></polyline></svg>
+                                <span>name (Ad Soyad)</span>
+                            </div>
+                            <div class="item">
+                                <svg class="dot ready" width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#c6a15b"></circle><polyline points="4.5,8.2 7,10.5 11.5,5.5" fill="none" stroke="#1a2a5e" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></polyline></svg>
+                                <span>country (Ülke)</span>
+                            </div>
+                            <div class="item">
+                                <svg class="dot ready" width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#c6a15b"></circle><polyline points="4.5,8.2 7,10.5 11.5,5.5" fill="none" stroke="#1a2a5e" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></polyline></svg>
+                                <span>committee (Komite)</span>
+                            </div>
+                            <div class="item soon">
+                                <svg class="dot soon" width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#ddd6c7"></circle><polyline points="4.5,8.2 7,10.5 11.5,5.5" fill="none" stroke="#8a8d99" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></polyline></svg>
+                                <span>Rol</span>
+                                <span class="soon-tag">Yakında</span>
+                            </div>
+                            <div class="item">
+                                <svg class="dot ready" width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#c6a15b"></circle><polyline points="4.5,8.2 7,10.5 11.5,5.5" fill="none" stroke="#1a2a5e" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></polyline></svg>
+                                <span>photo_url (Fotoğraf, opsiyonel)</span>
+                            </div>
+                        </div>
+                        <a href="/download-sample" class="btn-outline">Örnek Şablonu İndir</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- 2. Kart Tasarımı -->
+    <section id="tasarim" class="card">
+        <div class="accent-bar"></div>
+        <div class="card-body">
+            <span class="eyebrow">Adım 2</span>
+            <h2 class="serif">Kart Tasarımı ve Alan Yerleştirme</h2>
+            <p class="lead">Kendi tasarımınızı (ve isteğe bağlı logonuzu) yükleyin; açılan editörde alanları tasarımın üzerine yerleştireceksiniz.</p>
+            <div class="divider"></div>
+
+            <form action="/upload-template" method="post" enctype="multipart/form-data">
+                <div class="row align-start">
+                    <div style="flex:2 1 420px;display:flex;flex-direction:column;gap:16px;">
+                        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+                            <div class="panel-title" style="color:var(--navy);">Tasarım Önizleme</div>
+                            <label class="btn-outline" style="cursor:pointer;">
+                                Tasarım Yükle
+                                <input type="file" name="template_image" id="template-image-input" accept="image/*" required style="display:none;">
+                            </label>
+                        </div>
+
+                        <div class="canvas-preview" id="template-canvas-preview">
+                            <span class="placeholder">Kart Tasarımı Önizleme</span>
+                        </div>
+
+                        <div>
+                            <label class="field-label">Logo (opsiyonel)</label>
+                            <input type="file" name="logo_image" accept="image/*" class="text-input" style="padding:8px;">
+                        </div>
+
+                        <button type="submit" class="pill-btn" style="align-self:flex-start;">Şablonu Yükle ve Editörü Aç</button>
+                    </div>
+
+                    <div style="flex:1 1 240px;display:flex;flex-direction:column;gap:14px;">
+                        <div class="panel-title" style="color:var(--navy);">Alanlar</div>
+                        <p style="font-size:13px;color:var(--muted);line-height:1.6;margin:0;">Şablonu yükledikten sonra açılan editörde tasarım üzerine tıklayarak bu alanları konumlandırabilirsiniz.</p>
+                        <div style="display:flex;flex-direction:column;gap:10px;">
+                            <div class="field-chip ready"><span class="bullet"></span><span>Ad Soyad</span></div>
+                            <div class="field-chip ready"><span class="bullet"></span><span>Ülke</span></div>
+                            <div class="field-chip ready"><span class="bullet"></span><span>Komite</span></div>
+                            <div class="field-chip ready"><span class="bullet"></span><span>Logo</span></div>
+                            <div class="field-chip ready"><span class="bullet"></span><span>Bayrak</span></div>
+                            <div class="field-chip ready"><span class="bullet"></span><span>Fotoğraf</span></div>
+                            <div class="field-chip soon"><span class="bullet"></span><span>QR Kod</span><span class="soon-tag">Yakında</span></div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- 3. Kart Oluştur -->
+    <section id="olustur" class="card">
+        <div class="accent-bar"></div>
+        <div class="card-body">
+            <span class="eyebrow">Adım 3</span>
+            <h2 class="serif">Rozet / Plaket Oluştur</h2>
+            <p class="lead">Kart türünü ve şablonunuzu seçin, ardından tüm katılımcılar için kartları üretin.</p>
+            <div class="divider"></div>
+
+            <div class="quick-action">
+                <div class="qa-text">
+                    <div class="qa-title">Hazır Tasarımla Hızlı Yaka Kartı</div>
+                    <div class="qa-desc">Şablon yüklemeden, sabit tasarımlı yaka kartı PDF'i üretin.</div>
+                </div>
+                <form action="/generate-badges" method="post" enctype="multipart/form-data">
+                    <input type="file" name="csv_file" accept=".csv" required>
+                    <button type="submit" class="pill-btn">PDF Oluştur</button>
+                </form>
+            </div>
+
+            <div class="row align-start" style="gap:36px;">
+                <form id="custom-card-form" enctype="multipart/form-data" style="flex:1 1 320px;display:flex;flex-direction:column;gap:22px;">
+                    <div>
+                        <label class="field-label">Kart Boyutu / Türü</label>
+                        <select name="card_type" id="card-type" class="select-input">
+                            <option value="badge">Yaka Kartı (Sabit Boyut)</option>
+                            <option value="placard">Plakkart (Özel Boyut)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="field-label">Kart Yönü</label>
+                        <div class="segmented">
+                            <button type="button" class="active" disabled title="Yakında eklenecek">Yatay</button>
+                            <button type="button" disabled title="Yakında eklenecek">Dikey</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="field-label">Şablon ID</label>
+                        <input type="text" name="template_id" class="text-input" required>
+                    </div>
+
+                    <div id="placard-dimensions" style="display:flex;gap:14px;flex-wrap:wrap;">
+                        <div style="flex:1 1 140px;">
+                            <label class="field-label">Genişlik (mm)</label>
+                            <input type="number" name="width_mm" step="0.1" class="text-input">
+                        </div>
+                        <div style="flex:1 1 140px;">
+                            <label class="field-label">Yükseklik (mm)</label>
+                            <input type="number" name="height_mm" step="0.1" class="text-input">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="field-label">Sayfa Başına Kart</label>
+                        <input type="number" name="cards_per_page" id="cards-per-page" class="text-input" style="width:120px;" value="1" min="1" max="40">
+                    </div>
+
+                    <div>
+                        <label class="field-label">Çıktı Formatı</label>
+                        <div class="segmented">
+                            <button type="button" class="active" disabled>PDF</button>
+                            <button type="button" disabled title="Yakında eklenecek">PNG</button>
+                        </div>
+                    </div>
+
+                    <div class="checkbox-row disabled">
+                        <input type="checkbox" checked disabled title="Kesim çizgileri her zaman gösterilir">
+                        <label>Kesim çizgilerini göster (her zaman aktif)</label>
+                    </div>
+
+                    <div>
+                        <label class="field-label">Katılımcı Listesi (CSV)</label>
+                        <input type="file" name="csv_file" accept=".csv" required class="text-input" style="padding:8px;">
+                    </div>
+
+                    <button type="submit" class="btn-generate" id="generate-btn">Kartları Oluştur</button>
+                    <div class="status-msg" id="generate-status"></div>
+                </form>
+
+                <div style="flex:1 1 280px;display:flex;flex-direction:column;align-items:center;gap:16px;">
+                    <div class="panel-title" style="align-self:flex-start;color:var(--navy);">Örnek Önizleme</div>
+                    <div class="preview-badge">
+                        <div class="strip"><span>MUN 2026</span></div>
+                        <div class="body">
+                            <div class="avatar"></div>
+                            <div class="name serif">Ayşe Yılmaz</div>
+                            <div class="country">Türkiye</div>
+                            <div class="committee">UNSC · Delege</div>
+                        </div>
+                        <div class="footer"><span>MUN KART ÜRETİCİ</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<footer class="bottom-bar">
+    <span>© 2026 MUN Kart Üretici</span>
+    <div class="links">
+        <a href="#">Yardım</a>
+        <a href="#">İletişim</a>
+    </div>
+</footer>
 
 <script>
+// CSV dropzone: show selected filename
+(function () {
+    const dropzone = document.getElementById("csv-preview-dropzone");
+    const input = dropzone.querySelector("input[type=file]");
+    const label = dropzone.querySelector("[data-filename-label]");
+    input.addEventListener("change", function () {
+        label.textContent = input.files[0] ? "✓ " + input.files[0].name : "";
+    });
+})();
+
+// Template design upload: live client-side preview
+(function () {
+    const input = document.getElementById("template-image-input");
+    const canvas = document.getElementById("template-canvas-preview");
+    input.addEventListener("change", function () {
+        const file = input.files[0];
+        if (!file) return;
+        const url = URL.createObjectURL(file);
+        canvas.style.backgroundImage = `url(${url})`;
+        canvas.querySelector(".placeholder").style.display = "none";
+    });
+})();
+
+// Custom badge/placard form: card type toggles width/height fields, then submits via fetch
 const cardTypeSelect = document.getElementById("card-type");
 const placardDimensions = document.getElementById("placard-dimensions");
 
 function toggleDimensions() {
     const isPlacard = cardTypeSelect.value === "placard";
-    placardDimensions.style.display = isPlacard ? "block" : "none";
+    placardDimensions.style.display = isPlacard ? "flex" : "none";
     placardDimensions.querySelector("[name=width_mm]").required = isPlacard;
     placardDimensions.querySelector("[name=height_mm]").required = isPlacard;
 }
@@ -60,6 +518,7 @@ document.getElementById("custom-card-form").addEventListener("submit", function(
     const isPlacard = form.card_type.value === "placard";
     const formData = new FormData();
     formData.append("csv_file", form.csv_file.files[0]);
+    formData.append("cards_per_page", form.cards_per_page.value);
 
     const endpoint = isPlacard
         ? `/generate-placards-custom/${templateId}`
@@ -70,6 +529,12 @@ document.getElementById("custom-card-form").addEventListener("submit", function(
         formData.append("height_mm", form.height_mm.value);
     }
 
+    const button = document.getElementById("generate-btn");
+    const status = document.getElementById("generate-status");
+    button.disabled = true;
+    status.className = "status-msg";
+    status.textContent = "Oluşturuluyor…";
+
     fetch(endpoint, {
         method: "POST",
         body: formData
@@ -78,8 +543,16 @@ document.getElementById("custom-card-form").addEventListener("submit", function(
     .then(blob => {
         const url = window.URL.createObjectURL(blob);
         window.open(url, "_blank");
+        status.className = "status-msg ok";
+        status.textContent = "✓ PDF oluşturuldu ve yeni sekmede açıldı.";
     })
-    .catch(error => alert("Hata: " + error));
+    .catch(error => {
+        status.className = "status-msg err";
+        status.textContent = "Hata: " + error;
+    })
+    .finally(() => {
+        button.disabled = false;
+    });
 });
 </script>
 </body>

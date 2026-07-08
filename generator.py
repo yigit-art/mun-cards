@@ -2,14 +2,17 @@ import os
 import csv
 import io
 import json
+import math
 import uuid
 from flask import render_template
 from weasyprint import HTML
 from werkzeug.utils import secure_filename
 from country_flags import get_flag_path
+from delegate_photos import get_delegate_photo
 
 UPLOAD_FOLDER = "static/uploads"
 TEMPLATES_FOLDER = "templates_data"
+MAX_CARDS_PER_PAGE = 40
 
 
 def parse_csv(file_storage):
@@ -22,15 +25,25 @@ def parse_csv(file_storage):
             "name": row.get("name", "").strip(),
             "country": row.get("country", "").strip(),
             "committee": row.get("committee", "").strip(),
+            "photo_url": (row.get("photo_url") or "").strip(),
         })
     return delegates
 
 
-def attach_flag_paths(delegates):
-    """Attach a flag_path key to each delegate dict, in place."""
+def attach_media_paths(delegates):
+    """Attach flag_path and photo_path keys to each delegate dict, in place."""
     for delegate in delegates:
         delegate["flag_path"] = get_flag_path(delegate["country"])
+        delegate["photo_path"] = get_delegate_photo(delegate.get("photo_url"))
     return delegates
+
+
+def compute_grid_dimensions(cards_per_page):
+    """Clamp cards_per_page and compute a near-square (cols, rows) grid for it."""
+    cards_per_page = max(1, min(cards_per_page or 1, MAX_CARDS_PER_PAGE))
+    cols = math.ceil(math.sqrt(cards_per_page))
+    rows = math.ceil(cards_per_page / cols)
+    return cols, rows, cards_per_page
 
 
 def save_uploaded_image(image_file):
@@ -77,18 +90,23 @@ def render_badges_pdf(delegates, base_url):
     return HTML(string=html_string, base_url=base_url).write_pdf()
 
 
-def render_badges_custom_pdf(delegates, template_data, base_url):
+def render_badges_custom_pdf(delegates, template_data, base_url, cards_per_page=1):
+    grid_cols, grid_rows, cards_per_page = compute_grid_dimensions(cards_per_page)
     html_string = render_template(
         "badge_dynamic.html",
         delegates=delegates,
         background_image=template_data["background_image"],
         logo_image=template_data.get("logo_image"),
         fields=template_data["fields"],
+        cards_per_page=cards_per_page,
+        grid_cols=grid_cols,
+        grid_rows=grid_rows,
     )
     return HTML(string=html_string, base_url=base_url).write_pdf()
 
 
-def render_placards_custom_pdf(delegates, template_data, width_mm, height_mm, base_url):
+def render_placards_custom_pdf(delegates, template_data, width_mm, height_mm, base_url, cards_per_page=1):
+    grid_cols, grid_rows, cards_per_page = compute_grid_dimensions(cards_per_page)
     html_string = render_template(
         "placard_dynamic.html",
         delegates=delegates,
@@ -97,5 +115,8 @@ def render_placards_custom_pdf(delegates, template_data, width_mm, height_mm, ba
         fields=template_data["fields"],
         width_mm=width_mm,
         height_mm=height_mm,
+        cards_per_page=cards_per_page,
+        grid_cols=grid_cols,
+        grid_rows=grid_rows,
     )
     return HTML(string=html_string, base_url=base_url).write_pdf()

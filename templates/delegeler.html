@@ -1,26 +1,186 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <title>Delege Listesi</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Katılımcı Listesi · MUN Kart Üretici</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --navy: #1a2a5e;
+        --gold: #c6a15b;
+        --cream: #faf7f0;
+        --ink: #2b2b33;
+        --muted: #6b6f7d;
+        --faint: #ddd6c7;
+    }
+    * { box-sizing: border-box; }
+    body {
+        margin: 0;
+        background: var(--cream);
+        font-family: 'IBM Plex Sans', sans-serif;
+        color: var(--ink);
+    }
+    a { color: var(--navy); }
+    a:hover { color: var(--gold); }
+    .serif { font-family: 'Source Serif 4', serif; }
+
+    header.top-bar {
+        background: var(--navy);
+        padding: 20px 48px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+    header.top-bar .brand { display: flex; align-items: center; gap: 14px; }
+    header.top-bar .brand-title { font-size: 21px; font-weight: 700; color: #fff; }
+    header.top-bar .brand-subtitle {
+        font-size: 11px; font-weight: 600; color: var(--gold);
+        letter-spacing: 1.2px; text-transform: uppercase; margin-top: 2px;
+    }
+    header.top-bar nav { display: flex; gap: 10px; flex-wrap: wrap; }
+    header.top-bar nav a {
+        padding: 9px 18px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.28);
+        color: #f3ede0; font-size: 13px; font-weight: 500; text-decoration: none;
+    }
+    header.top-bar nav a:hover { background: var(--gold); color: var(--navy); border-color: var(--gold); }
+
+    main { max-width: 1180px; margin: 0 auto; padding: 36px 48px 90px; }
+
+    section.card {
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 4px 24px rgba(26,42,94,0.08);
+        overflow: hidden;
+    }
+    .card-body { padding: 40px; }
+
+    .head-row {
+        display: flex; align-items: center; justify-content: space-between;
+        flex-wrap: wrap; gap: 16px; margin-bottom: 8px;
+    }
+    .eyebrow {
+        display: block; font-size: 12px; font-weight: 700; letter-spacing: 1.5px;
+        color: var(--gold); text-transform: uppercase; margin-bottom: 8px;
+    }
+    h1 { font-size: 28px; font-weight: 700; color: var(--navy); margin: 0; }
+    p.lead { font-size: 14px; color: var(--muted); margin: 0 0 26px; max-width: 680px; }
+    .divider { height: 1px; background: linear-gradient(90deg, var(--gold), rgba(198,161,91,0)); margin-bottom: 24px; }
+
+    .btn-outline {
+        padding: 9px 18px; border-radius: 8px; border: 1.5px solid var(--navy); color: var(--navy);
+        font-size: 12.5px; font-weight: 600; text-decoration: none; display: inline-block;
+    }
+    .btn-outline:hover { background: var(--navy); color: #fff; }
+
+    .count-row { display: flex; align-items: baseline; gap: 10px; margin-bottom: 24px; }
+    .count-number { font-size: 32px; font-weight: 700; color: var(--navy); }
+    .count-label { font-size: 14px; font-weight: 600; color: var(--muted); }
+
+    table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    .table-wrap { border-radius: 12px; overflow: hidden; border: 1px solid #e8e2d3; }
+    thead tr { background: var(--navy); }
+    th { padding: 14px 18px; text-align: left; color: #fff; font-weight: 600; }
+    td { padding: 13px 18px; color: var(--ink); }
+    tbody tr:not(:first-child) { border-top: 1px solid #eee7d8; }
+
+    .actions-bar {
+        display: flex; align-items: center; justify-content: flex-end; gap: 16px;
+        margin-top: 32px; padding-top: 24px; border-top: 1px solid #eee7d8;
+    }
+    .btn-generate {
+        padding: 14px 30px; border-radius: 12px; border: none; background: var(--gold);
+        color: var(--navy); font-size: 15px; font-weight: 700; cursor: pointer;
+        box-shadow: 0 8px 20px rgba(198,161,91,0.35); text-decoration: none; display: inline-block;
+    }
+    .btn-generate:hover { background: #d8b46f; }
+
+    footer.bottom-bar {
+        background: #121f47; padding: 24px 48px; display: flex; justify-content: space-between;
+        flex-wrap: wrap; gap: 12px;
+    }
+    footer.bottom-bar span { font-size: 12.5px; color: #cfd3e0; }
+    footer.bottom-bar .links { display: flex; gap: 20px; }
+    footer.bottom-bar a { font-size: 12.5px; color: #cfd3e0; text-decoration: none; }
+    footer.bottom-bar a:hover { color: var(--gold); }
+</style>
 </head>
 <body>
-    <h1>Delege Listesi</h1>
-    <table border="1" cellpadding="8">
-        <tr>
-            <th>İsim</th>
-            <th>Ülke</th>
-            <th>Komite</th>
-        </tr>
-        {% for delegate in delegates %}
-        <tr>
-            <td>{{ delegate.name }}</td>
-            <td>{{ delegate.country }}</td>
-            <td>{{ delegate.committee }}</td>
-        </tr>
-        {% endfor %}
-    </table>
 
-    <p><a href="/">Geri dön</a></p>
+<header class="top-bar">
+    <div class="brand">
+        <svg width="48" height="48" viewBox="0 0 48 48" style="flex-shrink:0;">
+            <circle cx="24" cy="24" r="22" fill="#1a2a5e" stroke="#c6a15b" stroke-width="2"></circle>
+            <ellipse cx="24" cy="24" rx="9" ry="20" fill="none" stroke="#c6a15b" stroke-width="1" opacity="0.5"></ellipse>
+            <line x1="3" y1="24" x2="45" y2="24" stroke="#c6a15b" stroke-width="1" opacity="0.5"></line>
+            <text x="24" y="29" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="15" font-weight="700" fill="#c6a15b">MK</text>
+        </svg>
+        <div>
+            <div class="brand-title serif">MUN Kart Üretici</div>
+            <div class="brand-subtitle">Katılımcı Rozeti · Plaket Aracı</div>
+        </div>
+    </div>
+    <nav>
+        <a href="/">← Ana Sayfa</a>
+    </nav>
+</header>
+
+<main>
+    <section class="card">
+        <div class="card-body">
+            <div class="head-row">
+                <div>
+                    <span class="eyebrow">Yüklenen CSV</span>
+                    <h1 class="serif">Katılımcı Listesi</h1>
+                </div>
+                <a href="/#csv" class="btn-outline">CSV Değiştir</a>
+            </div>
+            <p class="lead">Yüklediğiniz CSV dosyasından ayrıştırılan ve ülkeleri doğrulanan delegeler aşağıda listelenmiştir.</p>
+            <div class="divider"></div>
+
+            <div class="count-row">
+                <span class="count-number serif">{{ delegates|length }}</span>
+                <span class="count-label">delege yüklendi</span>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ad Soyad</th>
+                            <th>Ülke</th>
+                            <th>Komite</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for delegate in delegates %}
+                        <tr>
+                            <td>{{ delegate.name }}</td>
+                            <td>{{ delegate.country }}</td>
+                            <td>{{ delegate.committee }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="actions-bar">
+                <a href="/#olustur" class="btn-generate">Kartları Oluşturmaya Geç</a>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer class="bottom-bar">
+    <span>© 2026 MUN Kart Üretici</span>
+    <div class="links">
+        <a href="#">Yardım</a>
+        <a href="#">İletişim</a>
+    </div>
+</footer>
+
 </body>
 </html>
