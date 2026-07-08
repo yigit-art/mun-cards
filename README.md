@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # MUN Kart Üretici
 
 Model United Nations (MUN) konferansları için delege listesinden (CSV) otomatik olarak **yaka kartı** ve **plakkart** PDF'leri üreten bir Flask uygulaması. Sabit tasarımlı yaka kartlarının yanı sıra, kendi görselinizi yükleyip alanları (isim, ülke, komite, logo, bayrak) sürükle-bırak yerine tıklama ile konumlandırarak özel şablonlar da oluşturabilirsiniz.
@@ -71,3 +72,6 @@ static/flags/         Önbelleğe alınmış bayrak görselleri
 static/uploads/       Yüklenen şablon/logo görselleri
 templates_data/       Kaydedilen özel şablonların JSON dosyaları
 ```
+=======
+# mun-cards
+>>>>>>> f403870501096968d1f1dbf3048eede470261b94
